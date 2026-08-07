@@ -17,7 +17,23 @@ export type ActionResult = {
 };
 
 function appUrl() {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+  if (configured && !configured.includes("localhost")) {
+    return configured;
+  }
+
+  // On Vercel, never fall back to localhost — phone / invite emails need the public URL.
+  const vercelProd = process.env.VERCEL_PROJECT_PRODUCTION_URL?.replace(/\/$/, "");
+  if (vercelProd) {
+    return `https://${vercelProd}`;
+  }
+
+  const vercelUrl = process.env.VERCEL_URL?.replace(/\/$/, "");
+  if (vercelUrl) {
+    return `https://${vercelUrl}`;
+  }
+
+  return configured || "http://localhost:3000";
 }
 
 function isZeroCount(value: unknown) {
