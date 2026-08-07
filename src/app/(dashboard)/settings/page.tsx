@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getMembershipContext, listHouseholdMembers } from "@/lib/supabase/auth";
 import { InviteMemberForm } from "@/features/auth/invite-form";
+import { DisplayNameForm } from "@/features/settings";
 import {
   Card,
   CardContent,
@@ -23,6 +24,8 @@ export default async function SettingsPage() {
 
   const members = await listHouseholdMembers(context.household.id);
   const isOwner = context.membership.role === "owner";
+  const currentDisplayName =
+    context.membership.display_name || context.profile.full_name || "";
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
@@ -30,6 +33,16 @@ export default async function SettingsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">הגדרות</h1>
         <p className="text-sm text-muted-foreground">משק הבית, מראה והזמנות</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>הפרופיל שלי</CardTitle>
+          <CardDescription>שם התצוגה שיופיע בעסקאות ובחישובים</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DisplayNameForm currentName={currentDisplayName} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

@@ -35,8 +35,13 @@ export const inviteMemberSchema = z.object({
   displayName: z.string().trim().max(80).optional(),
 });
 
+export const updateDisplayNameSchema = z.object({
+  displayName: z.string().trim().min(1, "נא להזין שם תצוגה").max(80),
+});
+
 export type LoginWithPasswordInput = z.infer<typeof loginWithPasswordSchema>;
 export type MagicLinkInput = z.infer<typeof magicLinkSchema>;
 export type SignUpInvitedInput = z.infer<typeof signUpInvitedSchema>;
 export type BootstrapHouseholdInput = z.infer<typeof bootstrapHouseholdSchema>;
 export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
+export type UpdateDisplayNameInput = z.infer<typeof updateDisplayNameSchema>;
