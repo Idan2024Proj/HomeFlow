@@ -13,7 +13,13 @@ export async function listBudgets(householdId: string, year: number, month: numb
     .eq("month", month)
     .order("amount", { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    // Table missing until phase4_budgets migration is applied
+    if (error.code === "PGRST205" || /budgets/i.test(error.message)) {
+      return [];
+    }
+    throw error;
+  }
   return (data ?? []).map((row) => {
     const category = Array.isArray(row.category) ? row.category[0] : row.category;
     return {

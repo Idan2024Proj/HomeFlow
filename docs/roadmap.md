@@ -23,8 +23,10 @@ Phases 1–10 מומשו בקוד. יש להריץ את כל קבצי ה־SQL ב
 
 1. `20260307000000_phase2_auth.sql`
 2. `20260307000100_phase3_transactions.sql`
-3. `20260307000200_phase4_budgets.sql`
+3. `20260307000200_phase4_budgets.sql` ← **חובה לתקציבים** (אם חסר — מסך תקציב ריק)
 4. `20260307000300_phases_5_to_8.sql`
 
 לאחר מכן ב־Supabase (אופציונלי ל־Realtime קניות):
 `alter publication supabase_realtime add table public.shopping_items;`
+
+מסכי Phase 5 באתר: `/budgets` · `/settlements` · `/savings`

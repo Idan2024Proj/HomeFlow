@@ -1,12 +1,35 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { getAuthUser, getMembershipContext } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { ParsedImportRow } from "@/lib/import";
 import { computeSplits } from "@/lib/finance";
 
 export type ActionResult = { ok: boolean; message?: string; imported?: number };
+
+// Server-side validation — the payload arrives from the client and must not be trusted
+const importPayloadSchema = z.object({
+  sourceName: z.string().trim().min(1).max(120),
+  fileType: z.enum(["csv", "xlsx"]),
+  mapping: z.record(z.string(), z.string().max(200)),
+  rows: z
+    .array(
+      z.object({
+        status: z.enum(["new", "duplicate", "invalid", "imported"]),
+        type: z.enum(["expense", "income"]),
+        amount: z.number().finite().positive().max(10_000_000),
+        occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        merchantName: z.string().trim().min(1).max(200),
+        lastFour: z.string().max(20).optional(),
+        note: z.string().max(500).nullish(),
+        fingerprint: z.string().max(200),
+        raw: z.record(z.string(), z.unknown()),
+      }),
+    )
+    .max(2000),
+});
 
 export async function commitImportAction(payload: {
   sourceName: string;
@@ -17,6 +40,12 @@ export async function commitImportAction(payload: {
   const user = await getAuthUser();
   const context = await getMembershipContext();
   if (!user || !context) return { ok: false, message: "יש להתחבר" };
+
+  const validated = importPayloadSchema.safeParse(payload);
+  if (!validated.success) {
+    return { ok: false, message: "קובץ הייבוא מכיל נתונים לא תקינים" };
+  }
+  payload = validated.data as typeof payload;
 
   const toImport = payload.rows.filter((r) => r.status === "new");
   if (toImport.length === 0) {

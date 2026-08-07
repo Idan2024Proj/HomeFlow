@@ -3,12 +3,31 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getMembershipContext, getAuthUser } from "@/lib/supabase/auth";
-import { transactionFormSchema } from "@/lib/validation/transactions";
+import { transactionFormSchema, type TransactionFormInput } from "@/lib/validation/transactions";
 import {
   createTransaction,
+  listActiveMembers,
   softDeleteTransaction,
   updateTransaction,
 } from "@/features/transactions/data";
+
+/** paid_by and split participants must be active members of this household. */
+async function validateParticipants(
+  householdId: string,
+  input: TransactionFormInput,
+): Promise<string | null> {
+  const members = await listActiveMembers(householdId);
+  const memberIds = new Set(members.map((m) => m.user_id).filter(Boolean));
+  const referenced = [input.paidBy, input.participantA, input.participantB].filter(
+    Boolean,
+  ) as string[];
+  for (const id of referenced) {
+    if (!memberIds.has(id)) {
+      return "המשלם והמשתתפים חייבים להיות חברי משק הבית";
+    }
+  }
+  return null;
+}
 
 export type TransactionActionResult = {
   ok: boolean;
@@ -52,6 +71,11 @@ export async function createTransactionAction(
       ok: false,
       message: parsed.error.issues[0]?.message ?? "שגיאה בטופס",
     };
+  }
+
+  const participantsError = await validateParticipants(context.household.id, parsed.data);
+  if (participantsError) {
+    return { ok: false, message: participantsError };
   }
 
   try {
@@ -101,6 +125,11 @@ export async function updateTransactionAction(
       ok: false,
       message: parsed.error.issues[0]?.message ?? "שגיאה בטופס",
     };
+  }
+
+  const participantsError = await validateParticipants(context.household.id, parsed.data);
+  if (participantsError) {
+    return { ok: false, message: participantsError };
   }
 
   try {

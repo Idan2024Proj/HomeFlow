@@ -81,6 +81,17 @@ export async function createSettlementAction(
     return { ok: false, message: parsed.error.issues[0]?.message ?? "שגיאה" };
   }
 
+  if (parsed.data.fromUserId === parsed.data.toUserId) {
+    return { ok: false, message: "לא ניתן לסגור חוב מול עצמך" };
+  }
+
+  // Both sides must be active members of this household
+  const members = await listActiveMembers(context.household.id);
+  const memberIds = new Set(members.map((m) => m.user_id).filter(Boolean));
+  if (!memberIds.has(parsed.data.fromUserId) || !memberIds.has(parsed.data.toUserId)) {
+    return { ok: false, message: "המשתמשים חייבים להיות חברי משק הבית" };
+  }
+
   const supabase = await createClient();
   const now = new Date();
   const { error } = await supabase.from("settlements").insert({

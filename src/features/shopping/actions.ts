@@ -86,6 +86,16 @@ export async function addItemAction(
   if (!parsed.success) return { ok: false, message: "בדקו את הפריט" };
 
   const supabase = await createClient();
+
+  // The list must belong to this household — block cross-household injection
+  const { data: list } = await supabase
+    .from("shopping_lists")
+    .select("id")
+    .eq("id", parsed.data.listId)
+    .eq("household_id", context.household.id)
+    .maybeSingle();
+  if (!list) return { ok: false, message: "הרשימה לא נמצאה" };
+
   const { error } = await supabase.from("shopping_items").insert({
     household_id: context.household.id,
     list_id: parsed.data.listId,

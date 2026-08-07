@@ -35,6 +35,18 @@ export async function upsertBudgetAction(
   const categoryId = parsed.data.categoryId || null;
 
   const supabase = await createClient();
+
+  if (categoryId) {
+    // The category must belong to this household
+    const { data: category } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("id", categoryId)
+      .eq("household_id", context.household.id)
+      .maybeSingle();
+    if (!category) return { ok: false, message: "קטגוריה לא נמצאה" };
+  }
+
   let query = supabase
     .from("budgets")
     .select("id")
@@ -50,7 +62,16 @@ export async function upsertBudgetAction(
       .from("budgets")
       .update({ amount: parsed.data.amount })
       .eq("id", existing.id);
-    if (error) return { ok: false, message: error.message };
+    if (error) {
+      if (error.code === "PGRST205" || /budgets/i.test(error.message)) {
+        return {
+          ok: false,
+          message:
+            "טבלת תקציבים עדיין לא הוגדרה. הריצו את supabase/migrations/20260307000200_phase4_budgets.sql ב־Supabase.",
+        };
+      }
+      return { ok: false, message: error.message };
+    }
   } else {
     const { error } = await supabase.from("budgets").insert({
       household_id: context.household.id,
@@ -60,7 +81,16 @@ export async function upsertBudgetAction(
       month: parsed.data.month,
       created_by: user.id,
     });
-    if (error) return { ok: false, message: error.message };
+    if (error) {
+      if (error.code === "PGRST205" || /budgets/i.test(error.message)) {
+        return {
+          ok: false,
+          message:
+            "טבלת תקציבים עדיין לא הוגדרה. הריצו את supabase/migrations/20260307000200_phase4_budgets.sql ב־Supabase.",
+        };
+      }
+      return { ok: false, message: error.message };
+    }
   }
 
   revalidatePath("/budgets");
