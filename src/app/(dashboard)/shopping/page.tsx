@@ -15,6 +15,7 @@ export default async function ShoppingPage({
   if (!context) return null;
   const params = await searchParams;
   const data = await getShoppingData(context.household.id, params.list);
+  const txtMaxKb = Number(process.env.SHOPPING_TXT_MAX_KB ?? "100") || 100;
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
@@ -29,6 +30,7 @@ export default async function ShoppingPage({
           name: l.name,
         }))}
         activeListId={data.activeListId}
+        txtMaxKb={txtMaxKb}
         initialItems={(data.items as Array<Record<string, unknown>>).map((i) => ({
           id: i.id as string,
           name: i.name as string,

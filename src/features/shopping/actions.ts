@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getAuthUser, getMembershipContext } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
+import { shoppingTxtImportItemsSchema } from "@/features/shopping/import";
 
 export type ActionResult = { ok: boolean; message?: string; listId?: string };
 
@@ -135,4 +136,76 @@ export async function deleteItemAction(itemId: string) {
     .eq("id", itemId)
     .eq("household_id", context.household.id);
   revalidatePath("/shopping");
+}
+
+export async function addItemsBulkAction(payload: {
+  listId: string;
+  items: Array<{
+    name: string;
+    quantity: number;
+    unit?: string | null;
+    rawText?: string;
+  }>;
+}): Promise<ActionResult> {
+  const user = await getAuthUser();
+  const context = await getMembershipContext();
+  if (!user || !context) return { ok: false, message: "יש להתחבר" };
+
+  const listId = z.string().uuid().safeParse(payload.listId);
+  if (!listId.success) return { ok: false, message: "רשימה לא תקינה" };
+
+  const itemsParsed = shoppingTxtImportItemsSchema.safeParse(
+    payload.items.map((item) => ({
+      rawText: item.rawText?.trim() || item.name,
+      name: item.name,
+      quantity: item.quantity,
+      unit: item.unit ?? null,
+      notes: null,
+    })),
+  );
+  if (!itemsParsed.success) {
+    return {
+      ok: false,
+      message: itemsParsed.error.issues[0]?.message ?? "לא נמצאו מוצרים ברשימה.",
+    };
+  }
+
+  const supabase = await createClient();
+  const { data: list } = await supabase
+    .from("shopping_lists")
+    .select("id")
+    .eq("id", listId.data)
+    .eq("household_id", context.household.id)
+    .maybeSingle();
+  if (!list) return { ok: false, message: "הרשימה לא נמצאה" };
+
+  const { data: existing } = await supabase
+    .from("shopping_items")
+    .select("sort_order")
+    .eq("list_id", listId.data)
+    .order("sort_order", { ascending: false })
+    .limit(1);
+  let sortOrder = Number(existing?.[0]?.sort_order ?? 0);
+
+  const rows = itemsParsed.data.map((item) => {
+    sortOrder += 1;
+    return {
+      household_id: context.household.id,
+      list_id: listId.data,
+      name: item.name,
+      quantity: item.quantity,
+      unit: item.unit,
+      added_by: user.id,
+      sort_order: sortOrder,
+    };
+  });
+
+  const { error } = await supabase.from("shopping_items").insert(rows);
+  if (error) return { ok: false, message: error.message };
+
+  revalidatePath("/shopping");
+  return {
+    ok: true,
+    message: `נוספו ${rows.length} מוצרים לרשימה`,
+  };
 }
