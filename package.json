@@ -11,7 +11,9 @@
     "format": "prettier --write .",
     "check:supabase": "node --use-system-ca ./scripts/check-supabase-fetch.cjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "import:shufersal:stores": "tsx --env-file=.env.local scripts/import-shufersal.ts --stores",
+    "import:shufersal:prices": "tsx --env-file=.env.local scripts/import-shufersal.ts --prices"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -22,6 +24,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "exceljs": "^4.4.0",
+    "fast-xml-parser": "^5.10.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "lucide-react": "^1.29.0",
@@ -49,6 +52,7 @@
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.6",
     "tailwindcss": "^4",
+    "tsx": "^4.23.11",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

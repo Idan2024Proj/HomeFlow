@@ -56,7 +56,7 @@ export function AppShell({ context, children }: AppShellProps) {
     <div className="flex min-h-full flex-1 bg-background">
       <aside className="hidden w-56 shrink-0 border-e border-border bg-surface md:flex md:flex-col">
         <div className="border-b border-border px-4 py-4">
-          <AppLogo size="sm" showName />
+          <AppLogo size="md" showName />
           <p className="mt-1 truncate text-xs text-muted-foreground">{context.household.name}</p>
         </div>
         <div className="p-3">
@@ -109,7 +109,7 @@ export function AppShell({ context, children }: AppShellProps) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 md:hidden">
           <div>
-            <AppLogo size="sm" showName />
+            <AppLogo size="md" showName />
             <p className="mt-0.5 text-xs text-muted-foreground">{context.household.name}</p>
           </div>
           <div className="flex items-center gap-2">

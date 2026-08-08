@@ -44,9 +44,19 @@ export default async function HomePage() {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">שלום, {greetingName}</h1>
-          <p className="text-sm text-muted-foreground">{data.monthLabel}</p>
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
+            alt="HomeFlow"
+            width={56}
+            height={56}
+            className="size-14 shrink-0 rounded-full object-cover"
+          />
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold tracking-tight">שלום, {greetingName}</h1>
+            <p className="text-sm text-muted-foreground">{data.monthLabel}</p>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href="/transactions/new" className={cn(buttonVariants())}>
