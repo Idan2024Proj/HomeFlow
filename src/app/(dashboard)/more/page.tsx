@@ -14,6 +14,7 @@ const MORE = NAV_DESKTOP.filter((i) =>
     "/reports",
     "/import",
     "/receipts",
+    "/prices",
     "/settings",
   ].includes(i.href),
 );

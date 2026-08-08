@@ -11,6 +11,7 @@ import {
   FileBarChart,
   Upload,
   ScanLine,
+  Tag,
 } from "lucide-react";
 import { NAV_DESKTOP } from "@/constants/app";
 import { signOutAction } from "@/features/auth/actions";
@@ -30,6 +31,7 @@ const ENABLED_HREFS = new Set([
   "/reports",
   "/import",
   "/receipts",
+  "/prices",
   "/settings",
 ]);
 
@@ -43,6 +45,7 @@ const ICONS: Record<string, typeof Home> = {
   "/reports": FileBarChart,
   "/import": Upload,
   "/receipts": ScanLine,
+  "/prices": Tag,
   "/settings": Settings,
 };
 

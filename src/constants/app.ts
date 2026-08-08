@@ -13,6 +13,7 @@ export const NAV_DESKTOP = [
   { href: "/reports", label: "דוחות" },
   { href: "/import", label: "ייבוא" },
   { href: "/receipts", label: "קבלה (Beta)" },
+  { href: "/prices", label: "מחירי סופר" },
   { href: "/settings", label: "הגדרות" },
 ] as const;
 

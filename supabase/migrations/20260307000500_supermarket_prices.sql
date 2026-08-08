@@ -1,4 +1,4 @@
--- HomeFlow: supermarket price transparency (global catalog, not household-scoped)
+-- HomeFlow: supermarket transparency catalog (global, not household-scoped)
 
 create table if not exists public.supermarket_chains (
   id uuid primary key default gen_random_uuid(),
@@ -27,33 +27,29 @@ create index if not exists supermarket_stores_city_idx
 
 create table if not exists public.supermarket_products (
   id uuid primary key default gen_random_uuid(),
-  chain_id uuid not null references public.supermarket_chains (id) on delete cascade,
-  product_code text not null,
+  product_code text not null unique,
   barcode text,
   name text not null,
+  normalized_name text not null default '',
   manufacturer text,
-  manufacturer_item_description text,
   unit_of_measure text,
   quantity numeric(12, 3),
-  normalized_name text not null default '',
   created_at timestamptz not null default timezone('utc', now()),
-  updated_at timestamptz not null default timezone('utc', now()),
-  unique (chain_id, product_code)
+  updated_at timestamptz not null default timezone('utc', now())
 );
 
 create index if not exists supermarket_products_normalized_name_idx
   on public.supermarket_products (normalized_name);
 
-create index if not exists supermarket_products_barcode_idx
-  on public.supermarket_products (barcode)
-  where barcode is not null;
+create index if not exists supermarket_products_name_trgm_ready_idx
+  on public.supermarket_products (name);
 
 create table if not exists public.latest_store_prices (
   id uuid primary key default gen_random_uuid(),
   store_id uuid not null references public.supermarket_stores (id) on delete cascade,
   product_id uuid not null references public.supermarket_products (id) on delete cascade,
   price numeric(12, 2) not null check (price > 0),
-  unit_price numeric(12, 4),
+  unit_price numeric(12, 2),
   allow_discount boolean,
   source_updated_at timestamptz,
   imported_at timestamptz not null default timezone('utc', now()),
@@ -71,109 +67,56 @@ create table if not exists public.price_history (
   store_id uuid not null references public.supermarket_stores (id) on delete cascade,
   product_id uuid not null references public.supermarket_products (id) on delete cascade,
   price numeric(12, 2) not null check (price > 0),
-  unit_price numeric(12, 4),
   source_updated_at timestamptz,
-  imported_at timestamptz not null default timezone('utc', now())
+  recorded_at timestamptz not null default timezone('utc', now())
 );
 
 create index if not exists price_history_store_product_idx
-  on public.price_history (store_id, product_id, imported_at desc);
+  on public.price_history (store_id, product_id, recorded_at desc);
 
 create table if not exists public.store_import_status (
-  store_id uuid primary key references public.supermarket_stores (id) on delete cascade,
-  last_success_at timestamptz,
-  last_attempt_at timestamptz,
-  last_status text not null default 'never'
-    check (last_status in ('never', 'success', 'failed', 'suspicious')),
-  last_error text,
-  last_item_count int,
-  last_source_file text,
-  updated_at timestamptz not null default timezone('utc', now())
-);
-
-create table if not exists public.supermarket_promotions (
   id uuid primary key default gen_random_uuid(),
-  chain_id uuid not null references public.supermarket_chains (id) on delete cascade,
-  store_id uuid references public.supermarket_stores (id) on delete cascade,
-  external_promotion_id text not null,
-  description text,
-  start_at timestamptz,
-  end_at timestamptz,
-  min_quantity numeric(12, 3),
-  promotional_price numeric(12, 2),
-  club_only boolean not null default false,
-  created_at timestamptz not null default timezone('utc', now()),
-  updated_at timestamptz not null default timezone('utc', now()),
-  unique (chain_id, store_id, external_promotion_id)
+  store_id uuid not null references public.supermarket_stores (id) on delete cascade,
+  feed_type text not null check (feed_type in ('stores', 'prices', 'promotions')),
+  status text not null check (status in ('success', 'failed', 'running')),
+  source_file text,
+  row_count int not null default 0,
+  error_message text,
+  started_at timestamptz not null default timezone('utc', now()),
+  finished_at timestamptz,
+  unique (store_id, feed_type)
 );
 
-create table if not exists public.supermarket_promotion_products (
-  promotion_id uuid not null references public.supermarket_promotions (id) on delete cascade,
-  product_code text not null,
-  primary key (promotion_id, product_code)
-);
-
--- Triggers
-create trigger supermarket_chains_set_updated_at
-  before update on public.supermarket_chains
-  for each row execute function public.set_updated_at();
-
-create trigger supermarket_stores_set_updated_at
-  before update on public.supermarket_stores
-  for each row execute function public.set_updated_at();
-
-create trigger supermarket_products_set_updated_at
-  before update on public.supermarket_products
-  for each row execute function public.set_updated_at();
-
-create trigger supermarket_promotions_set_updated_at
-  before update on public.supermarket_promotions
-  for each row execute function public.set_updated_at();
-
-create trigger store_import_status_set_updated_at
-  before update on public.store_import_status
-  for each row execute function public.set_updated_at();
-
--- RLS: global catalog readable by authenticated members; writes via service role only
+-- Global catalog: readable by authenticated household members (comparison UI)
 alter table public.supermarket_chains enable row level security;
 alter table public.supermarket_stores enable row level security;
 alter table public.supermarket_products enable row level security;
 alter table public.latest_store_prices enable row level security;
 alter table public.price_history enable row level security;
 alter table public.store_import_status enable row level security;
-alter table public.supermarket_promotions enable row level security;
-alter table public.supermarket_promotion_products enable row level security;
 
-drop policy if exists supermarket_chains_select on public.supermarket_chains;
-create policy supermarket_chains_select on public.supermarket_chains
+drop policy if exists supermarket_chains_select_auth on public.supermarket_chains;
+create policy supermarket_chains_select_auth on public.supermarket_chains
   for select to authenticated using (true);
 
-drop policy if exists supermarket_stores_select on public.supermarket_stores;
-create policy supermarket_stores_select on public.supermarket_stores
+drop policy if exists supermarket_stores_select_auth on public.supermarket_stores;
+create policy supermarket_stores_select_auth on public.supermarket_stores
   for select to authenticated using (true);
 
-drop policy if exists supermarket_products_select on public.supermarket_products;
-create policy supermarket_products_select on public.supermarket_products
+drop policy if exists supermarket_products_select_auth on public.supermarket_products;
+create policy supermarket_products_select_auth on public.supermarket_products
   for select to authenticated using (true);
 
-drop policy if exists latest_store_prices_select on public.latest_store_prices;
-create policy latest_store_prices_select on public.latest_store_prices
+drop policy if exists latest_store_prices_select_auth on public.latest_store_prices;
+create policy latest_store_prices_select_auth on public.latest_store_prices
   for select to authenticated using (true);
 
-drop policy if exists price_history_select on public.price_history;
-create policy price_history_select on public.price_history
+drop policy if exists price_history_select_auth on public.price_history;
+create policy price_history_select_auth on public.price_history
   for select to authenticated using (true);
 
-drop policy if exists store_import_status_select on public.store_import_status;
-create policy store_import_status_select on public.store_import_status
-  for select to authenticated using (true);
-
-drop policy if exists supermarket_promotions_select on public.supermarket_promotions;
-create policy supermarket_promotions_select on public.supermarket_promotions
-  for select to authenticated using (true);
-
-drop policy if exists supermarket_promotion_products_select on public.supermarket_promotion_products;
-create policy supermarket_promotion_products_select on public.supermarket_promotion_products
+drop policy if exists store_import_status_select_auth on public.store_import_status;
+create policy store_import_status_select_auth on public.store_import_status
   for select to authenticated using (true);
 
 grant select on public.supermarket_chains to authenticated;
@@ -182,5 +125,3 @@ grant select on public.supermarket_products to authenticated;
 grant select on public.latest_store_prices to authenticated;
 grant select on public.price_history to authenticated;
 grant select on public.store_import_status to authenticated;
-grant select on public.supermarket_promotions to authenticated;
-grant select on public.supermarket_promotion_products to authenticated;

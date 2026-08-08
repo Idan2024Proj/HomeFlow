@@ -1,0 +1,161 @@
+{
+  "provider": "shufersal",
+  "chainName": "שופרסל",
+  "chainExternalId": "7290027600007",
+  "storeExternalId": "357",
+  "storeName": "סניף בדיקה",
+  "sourceFile": "PriceFull7290027600007-001-357-20260808-034000.gz",
+  "fetchedAt": "2026-08-08T16:48:23.536Z",
+  "items": [
+    {
+      "productCode": "7290000040974",
+      "name": "חלב טרי 2% דל לקטוז 1 ל",
+      "price": 8.3,
+      "sourceUpdatedAt": "2025-08-12T08:17:00"
+    },
+    {
+      "productCode": "7290000042015",
+      "name": "חלב 3% מהדרין שקית 1 ל",
+      "price": 6.41,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    },
+    {
+      "productCode": "7290000042435",
+      "name": "חלב מפוסטר 1% בקרטון 1ל",
+      "price": 6.92,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    },
+    {
+      "productCode": "7290000042503",
+      "name": "חלב עמיד הומוגני 3% 1 ל",
+      "price": 9.1,
+      "sourceUpdatedAt": "2025-05-12T12:07:00"
+    },
+    {
+      "productCode": "7290000051352",
+      "name": "חלב מלא 3.8% 1ליטר תנובה",
+      "price": 9.1,
+      "sourceUpdatedAt": "2025-05-12T12:07:00"
+    },
+    {
+      "productCode": "7290000056845",
+      "name": "חלב טרי הומוגני3% 1.5ל",
+      "price": 11.02,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    },
+    {
+      "productCode": "7290003029815",
+      "name": "חלב מועשר3% כד 2ל",
+      "price": 18.4,
+      "sourceUpdatedAt": "2025-06-04T09:36:00"
+    },
+    {
+      "productCode": "7290004131074",
+      "name": "חלב בקרטון 3% שומן 1 ל",
+      "price": 7.35,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    },
+    {
+      "productCode": "7290010945306",
+      "name": "חלב 3% בקרטון 2 ליטר",
+      "price": 14.7,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    },
+    {
+      "productCode": "7290014758162",
+      "name": "חלב עיזים4%שומן 1ל תנובה",
+      "price": 18.5,
+      "sourceUpdatedAt": "2025-05-12T12:07:00"
+    },
+    {
+      "productCode": "7290102392094",
+      "name": "חלב עזים קרטון1ל צוריאל",
+      "price": 21.9,
+      "sourceUpdatedAt": "2026-06-14T13:32:00"
+    },
+    {
+      "productCode": "7290102396955",
+      "name": "חלב 3% בקרטון 2 ליטר",
+      "price": 14.7,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    },
+    {
+      "productCode": "7290102398065",
+      "name": "חלב 3% בקרטון מהדרין 2ל",
+      "price": 14.7,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    },
+    {
+      "productCode": "7290106728127",
+      "name": "חלב טבעי 3.6% 1ל יטבתה",
+      "price": 9.6,
+      "sourceUpdatedAt": "2025-06-04T09:36:00"
+    },
+    {
+      "productCode": "7290107932080",
+      "name": "חלב מועשר3%בקבוק1ל יטבתה",
+      "price": 9.2,
+      "sourceUpdatedAt": "2025-06-04T09:36:00"
+    },
+    {
+      "productCode": "7290107932134",
+      "name": "חלב מועשר1%בקבוק1ל יטבתה",
+      "price": 9.7,
+      "sourceUpdatedAt": "2025-06-04T09:36:00"
+    },
+    {
+      "productCode": "7290110563462",
+      "name": "חלב נטול לקטוז 2% 1 ליטר",
+      "price": 9.9,
+      "sourceUpdatedAt": "2025-07-15T07:50:00"
+    },
+    {
+      "productCode": "7290114310239",
+      "name": "חלב מוע.נטול לקטוז2% 1.5",
+      "price": 15.5,
+      "sourceUpdatedAt": "2026-06-14T13:32:00"
+    },
+    {
+      "productCode": "7290114311328",
+      "name": "חלב נטו.לקטוז מועשר2% 1ל",
+      "price": 10.3,
+      "sourceUpdatedAt": "2026-06-14T13:32:00"
+    },
+    {
+      "productCode": "7290114313018",
+      "name": "חלב נטול לקטוז וניל2% 1ל",
+      "price": 13,
+      "sourceUpdatedAt": "2025-05-19T14:04:00"
+    },
+    {
+      "productCode": "7290114313865",
+      "name": "חלב מועשר בחלבון 1 ליטר",
+      "price": 14.3,
+      "sourceUpdatedAt": "2026-06-14T13:32:00"
+    },
+    {
+      "productCode": "7290116930695",
+      "name": "חלב נטול לקטז2% 1ל תנובה",
+      "price": 8.9,
+      "sourceUpdatedAt": "2025-07-09T13:17:00"
+    },
+    {
+      "productCode": "7290116934273",
+      "name": "חלב וניל2% 1ליטר תנובה",
+      "price": 9.7,
+      "sourceUpdatedAt": "2025-05-12T12:07:00"
+    },
+    {
+      "productCode": "7290116935416",
+      "name": "חלב להקצפה לקפה2% 800מ\"ל",
+      "price": 8.9,
+      "sourceUpdatedAt": "2025-04-11T00:57:00"
+    },
+    {
+      "productCode": "7290116936307",
+      "name": "חלב 3% מהדרין 2ל תנובה",
+      "price": 14.7,
+      "sourceUpdatedAt": "2026-04-30T11:47:00"
+    }
+  ]
+}

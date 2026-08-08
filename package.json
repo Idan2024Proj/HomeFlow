@@ -12,14 +12,17 @@
     "check:supabase": "node --use-system-ca ./scripts/check-supabase-fetch.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "import:shufersal:stores": "tsx --env-file=.env.local scripts/import-shufersal.ts --stores",
-    "import:shufersal:prices": "tsx --env-file=.env.local scripts/import-shufersal.ts --prices"
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "test:e2e:milk": "playwright test -c e2e/playwright.config.ts milk-price",
+    "import:shufersal:stores": "node --use-system-ca ./node_modules/tsx/dist/cli.mjs --env-file=.env.local scripts/import-shufersal.ts --stores",
+    "import:shufersal:prices": "node --use-system-ca ./node_modules/tsx/dist/cli.mjs --env-file=.env.local scripts/import-shufersal.ts --prices"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@google/generative-ai": "^0.24.1",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.2",
+    "basic-ftp": "^6.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
@@ -43,6 +46,7 @@
     "uuid": "^11.1.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

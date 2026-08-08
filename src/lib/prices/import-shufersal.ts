@@ -90,11 +90,18 @@ export async function importShufersalStorePrices(options: {
   const admin = requireAdmin();
   const storeExternalId = String(Number(options.storeExternalId));
 
-  const { data: chain } = await admin
+  const { data: chain, error: chainLookupError } = await admin
     .from("supermarket_chains")
     .select("id")
     .eq("external_id", SHUFERSAL_CHAIN_EXTERNAL_ID)
     .maybeSingle();
+  if (chainLookupError) {
+    return {
+      ok: false,
+      count: 0,
+      message: `שגיאה בקריאת supermarket_chains: ${chainLookupError.message}`,
+    };
+  }
   if (!chain) {
     return {
       ok: false,
@@ -103,12 +110,19 @@ export async function importShufersalStorePrices(options: {
     };
   }
 
-  const { data: store } = await admin
+  const { data: store, error: storeLookupError } = await admin
     .from("supermarket_stores")
     .select("id, name, city")
     .eq("chain_id", chain.id)
     .eq("external_id", storeExternalId)
     .maybeSingle();
+  if (storeLookupError) {
+    return {
+      ok: false,
+      count: 0,
+      message: `שגיאה בקריאת supermarket_stores: ${storeLookupError.message}`,
+    };
+  }
   if (!store) {
     return {
       ok: false,
