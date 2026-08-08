@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AppLogo } from "@/components/shared/app-logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { LoginForm } from "@/features/auth/login-form";
 import {
@@ -30,10 +31,13 @@ export default async function LoginPage({
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-16 mx-auto h-40 w-40 rounded-full bg-primary/5 blur-3xl"
       />
-      <div className="mb-8 space-y-2 text-center">
-        <p className="text-sm font-medium text-primary">HomeFlow</p>
-        <h1 className="text-2xl font-semibold tracking-tight">התחברות</h1>
-        <p className="text-sm text-muted-foreground">ניהול משק בית משותף</p>
+      <div className="mb-8 flex flex-col items-center space-y-3 text-center">
+        <AppLogo size="lg" />
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-primary">HomeFlow</p>
+          <h1 className="text-2xl font-semibold tracking-tight">התחברות</h1>
+          <p className="text-sm text-muted-foreground">ניהול משק בית משותף</p>
+        </div>
       </div>
 
       <Card>

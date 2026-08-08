@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { AppLogo } from "@/components/shared/app-logo";
 import { getAuthUser, getMembershipContext } from "@/lib/supabase/auth";
 import { getSupabaseEnv } from "@/lib/supabase/server";
 import { BootstrapForm } from "@/features/auth/bootstrap-form";
@@ -34,12 +35,15 @@ export default async function OnboardingPage() {
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-md flex-1 flex-col justify-center px-6 py-12">
-      <div className="mb-8 space-y-2 text-center">
-        <p className="text-sm font-medium text-primary">HomeFlow</p>
-        <h1 className="text-2xl font-semibold tracking-tight">הקמת משק בית</h1>
-        <p className="text-sm text-muted-foreground">
-          צעד חד־פעמי למשתמש הראשון (Owner). לאחר מכן תוכלו להזמין שותף מההגדרות.
-        </p>
+      <div className="mb-8 flex flex-col items-center space-y-3 text-center">
+        <AppLogo size="lg" />
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-primary">HomeFlow</p>
+          <h1 className="text-2xl font-semibold tracking-tight">הקמת משק בית</h1>
+          <p className="text-sm text-muted-foreground">
+            צעד חד־פעמי למשתמש הראשון (Owner). לאחר מכן תוכלו להזמין שותף מההגדרות.
+          </p>
+        </div>
       </div>
       <Card>
         <CardHeader>

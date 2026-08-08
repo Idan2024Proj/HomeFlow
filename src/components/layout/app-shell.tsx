@@ -12,9 +12,10 @@ import {
   Upload,
   ScanLine,
 } from "lucide-react";
-import { APP_NAME, NAV_DESKTOP } from "@/constants/app";
+import { NAV_DESKTOP } from "@/constants/app";
 import { signOutAction } from "@/features/auth/actions";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { AppLogo } from "@/components/shared/app-logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 import type { MembershipContext } from "@/types/database";
@@ -55,8 +56,8 @@ export function AppShell({ context, children }: AppShellProps) {
     <div className="flex min-h-full flex-1 bg-background">
       <aside className="hidden w-56 shrink-0 border-e border-border bg-surface md:flex md:flex-col">
         <div className="border-b border-border px-4 py-4">
-          <p className="text-sm font-semibold text-primary">{APP_NAME}</p>
-          <p className="truncate text-xs text-muted-foreground">{context.household.name}</p>
+          <AppLogo size="sm" showName />
+          <p className="mt-1 truncate text-xs text-muted-foreground">{context.household.name}</p>
         </div>
         <div className="p-3">
           <Link href="/transactions/new" className={cn(buttonVariants(), "w-full")}>
@@ -108,8 +109,8 @@ export function AppShell({ context, children }: AppShellProps) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 md:hidden">
           <div>
-            <p className="text-sm font-semibold text-primary">{APP_NAME}</p>
-            <p className="text-xs text-muted-foreground">{context.household.name}</p>
+            <AppLogo size="sm" showName />
+            <p className="mt-0.5 text-xs text-muted-foreground">{context.household.name}</p>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle variant="compact" />
