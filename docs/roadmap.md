@@ -16,6 +16,7 @@ Phases 1–10 מומשו בקוד. יש להריץ את כל קבצי ה־SQL ב
 ## Phase 8 — Forecast and Detection — הושלם (אלגוריתמים + דוחות)
 ## Phase 9 — Reports — הושלם
 ## Phase 10 — PWA and Polish — הושלם (manifest + SW + offline)
+## Phase 11 — Receipt Intelligence — Beta (UI + API; דורש GEMINI_API_KEY + מיגרציית receipt_items)
 
 ---
 

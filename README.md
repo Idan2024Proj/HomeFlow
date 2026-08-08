@@ -21,7 +21,7 @@ npm run dev
 
 ## מסכים
 
-בית · תנועות · תקציב · קניות · התחשבנות · חיסכון · דוחות · ייבוא · הגדרות
+בית · תנועות · תקציב · קניות · התחשבנות · חיסכון · דוחות · ייבוא · קבלה (Beta) · הגדרות
 
 ## הערות
 
@@ -29,3 +29,4 @@ npm run dev
 - PWA: manifest + service worker בסיסי
 - PDF בעברית מלאה דורש הטמעת פונט — כרגע PDF באנגלית בסיסית; Excel מלא
 - Realtime לקניות: הוסיפו את `shopping_items` ל־publication ב־Supabase
+- סריקת קבלות (Beta): `GEMINI_API_KEY` בשרת + הרצת `20260307000400_receipt_items.sql`

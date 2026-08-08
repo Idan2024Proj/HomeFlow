@@ -10,6 +10,7 @@ import {
   PiggyBank,
   FileBarChart,
   Upload,
+  ScanLine,
 } from "lucide-react";
 import { APP_NAME, NAV_DESKTOP } from "@/constants/app";
 import { signOutAction } from "@/features/auth/actions";
@@ -27,6 +28,7 @@ const ENABLED_HREFS = new Set([
   "/savings",
   "/reports",
   "/import",
+  "/receipts",
   "/settings",
 ]);
 
@@ -39,6 +41,7 @@ const ICONS: Record<string, typeof Home> = {
   "/savings": PiggyBank,
   "/reports": FileBarChart,
   "/import": Upload,
+  "/receipts": ScanLine,
   "/settings": Settings,
 };
 

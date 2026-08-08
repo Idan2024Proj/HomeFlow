@@ -7,9 +7,15 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = { title: "עוד | HomeFlow" };
 
 const MORE = NAV_DESKTOP.filter((i) =>
-  ["/budgets", "/settlements", "/savings", "/reports", "/import", "/settings"].includes(
-    i.href,
-  ),
+  [
+    "/budgets",
+    "/settlements",
+    "/savings",
+    "/reports",
+    "/import",
+    "/receipts",
+    "/settings",
+  ].includes(i.href),
 );
 
 export default function MorePage() {
