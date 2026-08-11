@@ -5,6 +5,10 @@ import { z } from "zod";
 import { getAuthUser, getMembershipContext } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 import { shoppingTxtImportItemsSchema } from "@/features/shopping/import";
+import {
+  suggestEstimatedPrice,
+  suggestEstimatedPrices,
+} from "@/lib/supermarket/suggest-price";
 
 export type ActionResult = { ok: boolean; message?: string; listId?: string };
 
@@ -97,12 +101,17 @@ export async function addItemAction(
     .maybeSingle();
   if (!list) return { ok: false, message: "הרשימה לא נמצאה" };
 
+  let estimatedPrice = parsed.data.estimatedPrice ?? null;
+  if (estimatedPrice == null) {
+    estimatedPrice = await suggestEstimatedPrice(parsed.data.name);
+  }
+
   const { error } = await supabase.from("shopping_items").insert({
     household_id: context.household.id,
     list_id: parsed.data.listId,
     name: parsed.data.name,
     quantity: parsed.data.quantity,
-    estimated_price: parsed.data.estimatedPrice ?? null,
+    estimated_price: estimatedPrice,
     added_by: user.id,
   });
   if (error) return { ok: false, message: error.message };
@@ -187,6 +196,10 @@ export async function addItemsBulkAction(payload: {
     .limit(1);
   let sortOrder = Number(existing?.[0]?.sort_order ?? 0);
 
+  const priceByName = await suggestEstimatedPrices(
+    itemsParsed.data.map((item) => item.name),
+  );
+
   const rows = itemsParsed.data.map((item) => {
     sortOrder += 1;
     return {
@@ -195,6 +208,7 @@ export async function addItemsBulkAction(payload: {
       name: item.name,
       quantity: item.quantity,
       unit: item.unit,
+      estimated_price: priceByName.get(item.name.trim()) ?? null,
       added_by: user.id,
       sort_order: sortOrder,
     };

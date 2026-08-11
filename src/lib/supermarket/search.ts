@@ -31,17 +31,24 @@ export async function searchProductPrices(query: string): Promise<{
 
     if (!error && data && data.length > 0) {
       const hits: PriceSearchHit[] = data.map((row) => {
-        const product = Array.isArray(row.product) ? row.product[0] : row.product;
-        const store = Array.isArray(row.store) ? row.store[0] : row.store;
-        const chain = store && (Array.isArray((store as { chain?: unknown }).chain)
-          ? (store as { chain: Array<{ name: string }> }).chain[0]
-          : (store as { chain?: { name: string } }).chain);
+        const product = (Array.isArray(row.product) ? row.product[0] : row.product) as {
+          product_code: string;
+          name: string;
+        } | null;
+        const storeRaw = Array.isArray(row.store) ? row.store[0] : row.store;
+        const store = storeRaw as {
+          name?: string;
+          city?: string;
+          chain?: { name: string } | Array<{ name: string }> | null;
+        } | null;
+        const chainRaw = store?.chain;
+        const chain = Array.isArray(chainRaw) ? chainRaw[0] : chainRaw;
         return {
-          productCode: (product as { product_code: string }).product_code,
-          name: (product as { name: string }).name,
+          productCode: product?.product_code ?? "",
+          name: product?.name ?? "",
           price: Number(row.price),
-          storeName: (store as { name?: string } | null)?.name ?? null,
-          storeCity: (store as { city?: string } | null)?.city ?? null,
+          storeName: store?.name ?? null,
+          storeCity: store?.city ?? null,
           chainName: chain?.name ?? "רשת",
           sourceUpdatedAt: row.source_updated_at as string | null,
         };

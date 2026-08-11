@@ -1,10 +1,10 @@
 import { gunzipSync } from "zlib";
-import type { ImportedPriceItem, ImportedStore } from "./types";
+import type { ImportedPriceItem, ImportedStore } from "../types";
 import {
   decodeFeedBuffer,
   parsePriceFullXml,
   parseStoresXml,
-} from "./parse-xml";
+} from "../parse-xml";
 
 const PORTAL =
   "https://prices.shufersal.co.il/FileObject/UpdateCategory";

@@ -14,7 +14,7 @@ import {
 import { ShoppingTxtImportPanel } from "@/features/shopping/import/shopping-txt-import-panel";
 import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/utils/money";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FileUp, Plus } from "lucide-react";
 
 const initial: ActionResult = { ok: false };
@@ -27,6 +27,91 @@ type Item = {
   is_checked: boolean;
   category: string | null;
 };
+
+function AddItemForm({
+  listId,
+  action,
+  pending,
+}: {
+  listId: string;
+  action: (payload: FormData) => void;
+  pending: boolean;
+}) {
+  const [price, setPrice] = useState("");
+  const [priceHint, setPriceHint] = useState<string | null>(null);
+  const [lookingUp, setLookingUp] = useState(false);
+  const priceTouched = useRef(false);
+
+  async function lookupPrice(name: string) {
+    const q = name.trim();
+    if (!q || priceTouched.current || price.trim()) return;
+
+    setLookingUp(true);
+    setPriceHint(null);
+    try {
+      const res = await fetch(`/api/prices/search?q=${encodeURIComponent(q)}`);
+      const json = (await res.json()) as {
+        ok: boolean;
+        hits?: Array<{ price: number; name: string }>;
+      };
+      const hit = json.ok ? json.hits?.[0] : undefined;
+      if (hit && !priceTouched.current) {
+        setPrice(String(hit.price));
+        setPriceHint(`מחיר משופרסל: ${hit.name}`);
+      }
+    } catch {
+      // server action will still try on submit
+    } finally {
+      setLookingUp(false);
+    }
+  }
+
+  return (
+    <form action={action} className="flex flex-col gap-2 rounded-xl border border-border p-3">
+      <input type="hidden" name="listId" value={listId} />
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Input
+          name="name"
+          placeholder="פריט חדש (למשל חלב)"
+          required
+          className="flex-1"
+          autoFocus
+          onBlur={(e) => {
+            void lookupPrice(e.target.value);
+          }}
+        />
+        <Input
+          name="quantity"
+          type="number"
+          min="0.1"
+          step="0.1"
+          defaultValue="1"
+          className="w-24"
+          dir="ltr"
+        />
+        <Input
+          name="estimatedPrice"
+          type="number"
+          min="0"
+          step="0.01"
+          value={price}
+          onChange={(e) => {
+            priceTouched.current = true;
+            setPrice(e.target.value);
+            setPriceHint(null);
+          }}
+          placeholder={lookingUp ? "…" : "מחיר"}
+          className="w-28"
+          dir="ltr"
+        />
+        <Button type="submit" disabled={pending}>
+          הוסף
+        </Button>
+      </div>
+      {priceHint ? <p className="text-xs text-muted-foreground">{priceHint}</p> : null}
+    </form>
+  );
+}
 
 export function ShoppingClient({
   householdId,
@@ -150,31 +235,11 @@ export function ShoppingClient({
       ) : null}
 
       {activeListId && showAddForm ? (
-        <form action={itemAction} className="flex flex-col gap-2 rounded-xl border border-border p-3 sm:flex-row">
-          <input type="hidden" name="listId" value={activeListId} />
-          <Input name="name" placeholder="פריט חדש" required className="flex-1" autoFocus />
-          <Input
-            name="quantity"
-            type="number"
-            min="0.1"
-            step="0.1"
-            defaultValue="1"
-            className="w-24"
-            dir="ltr"
-          />
-          <Input
-            name="estimatedPrice"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="מחיר"
-            className="w-28"
-            dir="ltr"
-          />
-          <Button type="submit" disabled={itemPending}>
-            הוסף
-          </Button>
-        </form>
+        <AddItemForm
+          listId={activeListId}
+          action={itemAction}
+          pending={itemPending}
+        />
       ) : null}
 
       {activeListId && isEmpty && !showAddForm ? (
